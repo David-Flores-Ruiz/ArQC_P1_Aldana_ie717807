@@ -1,0 +1,5 @@
+commit df9da045da84f36615b07a02b336c4b7e961bc23
+Author: David Flores <ie717807@iteso.mx>
+Date:   Thu Feb 21 00:23:31 2019 -0600
+
+    file C with HANOI TOWER´Ś code - firs commit
