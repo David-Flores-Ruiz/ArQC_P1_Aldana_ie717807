@@ -13,7 +13,7 @@ torreC: .word 0 0 0 0 0 0 0 0
 .text
 ##################     MAIN     #################
 MAIN:
- addi $s0, $zero, 2	# En $s0 se guarda el NUM de DISCOS de la torre
+ addi $s0, $zero, 3	# En $s0 se guarda el NUM de DISCOS de la torre
  add $a0, $zero, $s0	# Parametro de DISCOS
  add $s1, $zero, $s0	# El mayor valor para construir la torre
  
@@ -56,31 +56,44 @@ Construir_torre_en_RAM:
  beq $a0, 1, casoBase		# if( n == 1 )
   casoRecursivo:		# else haz el caso comun (recursivo)		
    #add $t7, $zero, $a0
-   sub $a0, $a0, 1	# discos n-1 
-   addi $t1, $t1, 4	# posicionarme en 1 disco más arriba
+   sub $a0, $a0, 1	 # discos n-1 
+   addi $t1, $t1, 4	 # posicionarme en 1 disco más arriba
    add $t5, $zero, $t2 #la $t5, 0($t2)	### $t5 es AUX. para el SWAPEO
-   la $t2, 0($t3)	### Intercambiamos temp y dst
-   la $t3, 0($t5)	### dst = $t2  y  temp = $t3
+   add $t2, $zero, $t3	 ### Intercambiamos temp y dst
+   add $t3, $zero, $t5	 ### dst = $t2  y  temp = $t3
  
  jal f_Hanoi	# llamado recursivo
  # aqui regresa el primer RETURN 
- 
-   #sub $a0, $a0, 1	# discos n-1 
+Mueve_disco_de_ORG_a_DST:
+   add $t5, $zero, $t2   ### SWAPEO ORG y DST
+   add $t2, $zero, $t3	 ### 
+   add $t3, $zero, $t5	 ###
+#   sub $t1, $t1, 4 	# regresa un disco para atrás
+   lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
+   sw $t0, 0($t1)		# Borra disco movido
+   sw $t4, 0($t3)		# ... de A  a C
+   #NO va!!! #sub $a0, $a0, 1	# discos n-1 
    la $t5, 0($t2) 	### $t5 es AUX. para el SWAPEO
    la $t2, 0($t1)	### Intercamnbiamos org y temp
    la $t1, 0($t5)	### temp = $t1  y  org = $t2
  jal f_Hanoi	# llamado recursivo
  j end_if
-  casoBase:
+  casoBase:	# Mueve_disco_de_ORG_a_DST #
+  lw $t4, 0($t3)	# Cargoo el valor de mi DESTINO a un aux. que es $t4
+  beq $t4, 0, Mueve_de_ORG_a_DST	# Si no hay disco ya puedo mover
+  add $t3, $t3, 4
+  j casoBase		# Salta un disco arriba si hay algo escrito en el DESTINO  
+Mueve_de_ORG_a_DST:
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
    sw $t4, 0($t3)		# ... de A  a C
-
+   		
   end_if:
-   add $v0, $zero, $t1		# RETURN con $v0
+   add $v0, $zero, $v0		# NOP... RETURN con $v0
 #---------- LOAD 2 variables del STACK ----------# 
 	 lw $a0, 0($sp)
 	 lw $t1, 4($sp)
+   sub $t1, $t1, 4 	# Del disco anterior baja 1
 	 lw $t2, 8($sp)
 	 lw $t3, 12($sp)
 	 lw $ra, 16($sp)
