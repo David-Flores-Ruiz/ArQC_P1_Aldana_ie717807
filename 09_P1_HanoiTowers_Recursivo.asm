@@ -64,26 +64,33 @@ Construir_torre_en_RAM:
  
  jal f_Hanoi	# llamado recursivo
  # aqui regresa el primer RETURN 
-Mueve_disco_de_ORG_a_DST:
+
    add $t5, $zero, $t2   ### SWAPEO ORG y DST
    add $t2, $zero, $t3	 ### 
    add $t3, $zero, $t5	 ###
-#   sub $t1, $t1, 4 	# regresa un disco para atrás
+Caso_comun:
+lw $t4, 0($t3)	# Cargoo el valor de mi DESTINO a un aux. que es $t4
+  beq $t4, 0, MOV_2	# Si no hay disco ya puedo mover
+  add $t3, $t3, 4
+  j Caso_comun		# Salta un disco arriba si hay algo escrito en el DESTINO  
+MOV_2: # Mueve_disco_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
    sw $t4, 0($t3)		# ... de A  a C
-   #NO va!!! #sub $a0, $a0, 1	# discos n-1 
+   
    la $t5, 0($t2) 	### $t5 es AUX. para el SWAPEO
    la $t2, 0($t1)	### Intercamnbiamos org y temp
    la $t1, 0($t5)	### temp = $t1  y  org = $t2
+   
  jal f_Hanoi	# llamado recursivo
  j end_if
+  
   casoBase:	# Mueve_disco_de_ORG_a_DST #
   lw $t4, 0($t3)	# Cargoo el valor de mi DESTINO a un aux. que es $t4
-  beq $t4, 0, Mueve_de_ORG_a_DST	# Si no hay disco ya puedo mover
+  beq $t4, 0, MOV_1	# Si no hay disco ya puedo mover
   add $t3, $t3, 4
-  j casoBase		# Salta un disco arriba si hay algo escrito en el DESTINO  
-Mueve_de_ORG_a_DST:
+  j casoBase		# Salta un disco arriba si hay algo escrito en el DESTINO
+MOV_1: #M ueve_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
    sw $t4, 0($t3)		# ... de A  a C
