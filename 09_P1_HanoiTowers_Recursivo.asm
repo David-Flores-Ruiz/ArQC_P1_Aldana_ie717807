@@ -13,7 +13,7 @@ torreC: .word 0 0 0 0 0 0 0 0
 .text
 ##################     MAIN     #################
 MAIN:
- addi $s0, $zero, 7	# En $s0 se guarda el NUM de DISCOS de la torre
+ addi $s0, $zero, 2	# En $s0 se guarda el NUM de DISCOS de la torre
  add $a0, $zero, $s0	# Parametro de DISCOS
  add $s1, $zero, $s0	# El mayor valor para construir la torre
  
@@ -55,21 +55,22 @@ Construir_torre_en_RAM:
 #-----------------------------------------------#
  beq $a0, 1, casoBase		# if( n == 1 )
   casoRecursivo:		# else haz el caso comun (recursivo)		
+   #add $t7, $zero, $a0
    sub $a0, $a0, 1	# discos n-1 
    addi $t1, $t1, 4	# posicionarme en 1 disco más arriba
-   la $t5, 0($t2)	### $t5 es AUX. para el SWAPEO
+   add $t5, $zero, $t2 #la $t5, 0($t2)	### $t5 es AUX. para el SWAPEO
    la $t2, 0($t3)	### Intercambiamos temp y dst
    la $t3, 0($t5)	### dst = $t2  y  temp = $t3
  
  jal f_Hanoi	# llamado recursivo
  # aqui regresa el primer RETURN 
  
-   sub $a0, $a0, 1	# discos n-1 
+   #sub $a0, $a0, 1	# discos n-1 
    la $t5, 0($t2) 	### $t5 es AUX. para el SWAPEO
    la $t2, 0($t1)	### Intercamnbiamos org y temp
    la $t1, 0($t5)	### temp = $t1  y  org = $t2
  jal f_Hanoi	# llamado recursivo
- 
+ j end_if
   casoBase:
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
