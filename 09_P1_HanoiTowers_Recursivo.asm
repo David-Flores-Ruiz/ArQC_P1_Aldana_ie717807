@@ -13,7 +13,7 @@ torreC: .word 0 0 0 0 0 0 0 0
 .text
 ##################     MAIN     #################
 MAIN:
- addi $s0, $zero, 3	# En $s0 se guarda el NUM de DISCOS de la torre
+ addi $s0, $zero, 8	# En $s0 se guarda el NUM de DISCOS de la torre
  add $a0, $zero, $s0	# Parametro de DISCOS
  add $s1, $zero, $s0	# El mayor valor para construir la torre
  
@@ -55,9 +55,10 @@ Construir_torre_en_RAM:
 #-----------------------------------------------#
  beq $a0, 1, casoBase		# if( n == 1 )
   casoRecursivo:		# else haz el caso comun (recursivo)		
-   #add $t7, $zero, $a0
-   sub $a0, $a0, 1	 # discos n-1 
-   addi $t1, $t1, 4	 # posicionarme en 1 disco más arriba
+   sub $a0, $a0, 1	 # discos n-1
+   addi $t1, $t1, 4	 # posicionarme en 1 disco más 
+   
+MOV:
    add $t5, $zero, $t2 #la $t5, 0($t2)	### $t5 es AUX. para el SWAPEO
    add $t2, $zero, $t3	 ### Intercambiamos temp y dst
    add $t3, $zero, $t5	 ### dst = $t2  y  temp = $t3
@@ -65,14 +66,13 @@ Construir_torre_en_RAM:
  jal f_Hanoi	# llamado recursivo
  # aqui regresa el primer RETURN 
 
-   add $t5, $zero, $t2   ### SWAPEO ORG y DST
+   add $t5, $zero, $t2   ### SWAPEO TEMP y DST
    add $t2, $zero, $t3	 ### 
    add $t3, $zero, $t5	 ###
 Caso_comun:
-lw $t4, 0($t3)	# Cargoo el valor de mi DESTINO a un aux. que es $t4
-  beq $t4, 0, MOV_2	# Si no hay disco ya puedo mover
-  add $t3, $t3, 4
-  j Caso_comun		# Salta un disco arriba si hay algo escrito en el DESTINO  
+  jal VALIDA_ORG_Y_DST
+  j MOV_2
+  
 MOV_2: # Mueve_disco_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
@@ -84,17 +84,16 @@ MOV_2: # Mueve_disco_de_ORG_a_DST
    
  jal f_Hanoi	# llamado recursivo
  j end_if
-  
+     
   casoBase:	# Mueve_disco_de_ORG_a_DST #
-  lw $t4, 0($t3)	# Cargoo el valor de mi DESTINO a un aux. que es $t4
-  beq $t4, 0, MOV_1	# Si no hay disco ya puedo mover
-  add $t3, $t3, 4
-  j casoBase		# Salta un disco arriba si hay algo escrito en el DESTINO
+  jal VALIDA_ORG_Y_DST
+  j MOV_1  
+  
 MOV_1: #M ueve_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
    sw $t4, 0($t3)		# ... de A  a C
-   		
+	
   end_if:
    add $v0, $zero, $v0		# NOP... RETURN con $v0
 #---------- LOAD 2 variables del STACK ----------# 
@@ -108,5 +107,25 @@ MOV_1: #M ueve_de_ORG_a_DST
 #------------------------------------------------#
  jr $ra			# RETURN a la función recursiva
 
+
+#//////////////// FUNCION VALIDAR /////////////////
+VALIDA_ORG_Y_DST:
+  lw $t4, 0($t3)	# Cargo el valor de mi DESTINO a un aux. que es $t4
+  beq $t4, 0, Valida_pequeño	# Si no hay disco ya puedo mover
+  add $t3, $t3, 4
+  j VALIDA_ORG_Y_DST		# Salta un disco arriba si hay algo escrito en el DESTINO
+  
+Valida_pequeño:
+  lw $t5, 0($t1)
+  beq $t5, 0, End_valid
+  add $t1, $t1, 4
+j Valida_pequeño
+  
+End_valid:
+ sub $t1, $t1, 4
+ jr $ra			# RETURN de mi funcion
+#/////////////////////////////////////////////////
+ 
 ################# FIN DE PROGRAMA #################
 EXIT: add $a0, $a0, $zero	# FIN + NOP
+
