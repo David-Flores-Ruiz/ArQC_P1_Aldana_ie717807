@@ -1,3 +1,45 @@
+commit f9578c0ff12231e7448d8513fff079ac3c20f8ad
+Author: David Flores <ie717807@iteso.mx>
+Date:   Sat Mar 2 13:58:45 2019 -0600
+
+    IC = 10419 instructions
+
+commit 8a738a79c7e01800f7d606c2e46c7a5dc74c377e
+Author: David Flores <ie717807@iteso.mx>
+Date:   Fri Mar 1 07:42:40 2019 -0600
+
+    Hanoi is easy, but OPTIMIZED is complicated
+
+commit 9b2e306baa15545b0520118807841b685bad1f89
+Author: David Flores <ie717807@iteso.mx>
+Date:   Thu Feb 28 12:43:22 2019 -0600
+
+    succes case 3, but FAIL with 4 disks
+
+commit dc54ffc195d674faef0725635cd5800190275dec
+Author: David Flores <ie717807@iteso.mx>
+Date:   Thu Feb 28 12:10:33 2019 -0600
+
+    Success case 2 disk, but FAIL with 3 disk
+
+commit b60919eb33c9ad451384af4cc12a39de66843982
+Author: David Flores <ie717807@iteso.mx>
+Date:   Thu Feb 28 00:54:13 2019 -0600
+
+    fail with directions after case Base
+
+commit fec376713c0257864e503782e2d0afac648b2f55
+Author: David Flores <ie717807@iteso.mx>
+Date:   Tue Feb 26 01:41:46 2019 -0600
+
+    Building Initial Tower  and  Base Case
+
+commit 32378ac06dc7c34a8f29fc2cd9322d5a9a2f95fc
+Author: David Flores <ie717807@iteso.mx>
+Date:   Thu Feb 21 23:24:45 2019 -0600
+
+    Practice 1 _ Towers of Hanoi
+
 commit df9da045da84f36615b07a02b336c4b7e961bc23
 Author: David Flores <ie717807@iteso.mx>
 Date:   Thu Feb 21 00:23:31 2019 -0600

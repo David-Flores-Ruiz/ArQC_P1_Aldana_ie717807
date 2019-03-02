@@ -73,8 +73,24 @@ MOV:
    add $t2, $zero, $t3	 ### 
    add $t3, $zero, $t5	 ###
 Caso_comun:
-  jal VALIDA_ORG_Y_DST 
-  j MOV_2
+  j VALIDA_ORG_Y_DST_2
+
+  #//////////////// FUNCION VALIDAR /////////////////
+VALIDA_ORG_Y_DST_2:  
+  lw $t4, 0($t3)	# Cargo el valor de mi DESTINO a un aux. que es $t4
+  beq $t4, $zero, Valida_pequeño_2	# Si no hay disco ya puedo ahora ir a validar mi origen
+  add $t3, $t3, 4		# Salta un disco arriba si hay algo escrito en el DESTINO
+  j VALIDA_ORG_Y_DST_2		
+  
+Valida_pequeño_2:			# Revisa hasta que estes en el disco de hasta arriba (el más pequeño)
+  lw $t5, 0($t1)		# Una vez que encuentres 0s le restas 4 bytes para obtener disco
+  beq $t5, $zero, End_valid_2
+  add $t1, $t1, 4
+j Valida_pequeño_2
+  
+End_valid_2:
+ addi $t1, $t1, -4
+#/////////////////////////////////////////////////
   
 MOV_2: # Mueve_disco_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
@@ -89,8 +105,24 @@ MOV_2: # Mueve_disco_de_ORG_a_DST
  j end_if
      
   casoBase:	# Mueve_disco_de_ORG_a_DST #
-  jal VALIDA_ORG_Y_DST
-  j MOV_1  
+  j VALIDA_ORG_Y_DST_1
+  
+#//////////////// FUNCION VALIDAR /////////////////
+VALIDA_ORG_Y_DST_1:  
+  lw $t4, 0($t3)	# Cargo el valor de mi DESTINO a un aux. que es $t4
+  beq $t4, $zero, Valida_pequeño_1	# Si no hay disco ya puedo ahora ir a validar mi origen
+  add $t3, $t3, 4		# Salta un disco arriba si hay algo escrito en el DESTINO
+  j VALIDA_ORG_Y_DST_1		
+  
+Valida_pequeño_1:			# Revisa hasta que estes en el disco de hasta arriba (el más pequeño)
+  lw $t5, 0($t1)		# Una vez que encuentres 0s le restas 4 bytes para obtener disco
+  beq $t5, $zero, End_valid_1
+  add $t1, $t1, 4
+j Valida_pequeño_1
+  
+End_valid_1:
+ addi $t1, $t1, -4
+#/////////////////////////////////////////////////
   
 MOV_1: #M ueve_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
@@ -111,23 +143,5 @@ MOV_1: #M ueve_de_ORG_a_DST
 #------------------------------------------------#
  jr $ra			# RETURN a la función recursiva
 
-#//////////////// FUNCION VALIDAR /////////////////
-VALIDA_ORG_Y_DST:
-  lw $t4, 0($t3)	# Cargo el valor de mi DESTINO a un aux. que es $t4
-  beq $t4, $zero, Valida_pequeño	# Si no hay disco ya puedo ahora ir a validar mi origen
-  add $t3, $t3, 4		# Salta un disco arriba si hay algo escrito en el DESTINO
-  j VALIDA_ORG_Y_DST		
-  
-Valida_pequeño:			# Revisa hasta que estes en el disco de hasta arriba (el más pequeño)
-  lw $t5, 0($t1)		# Una vez que encuentres 0s le restas 4 bytes para obtener disco
-  beq $t5, $zero, End_valid
-  add $t1, $t1, 4
-j Valida_pequeño
-  
-End_valid:
- addi $t1, $t1, -4
- jr $ra			# RETURN de mi funcion
-#/////////////////////////////////////////////////
- 
 ################# FIN DE PROGRAMA #################
 EXIT:	# FIN + NOP
