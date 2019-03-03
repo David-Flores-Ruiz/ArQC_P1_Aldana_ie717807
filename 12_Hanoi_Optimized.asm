@@ -20,6 +20,7 @@ MAIN:
  addi $t0, $zero, 0		# $t0 = 0, para BORRAR en RAM
  addi $t1, $zero, 0x1001	# Carga parte Alta de dir. de Torre A
  sll $t1, $t1, 16		# $t1 = 0x1001 0000
+ ori $t1, $t1,   0x0000	
  
 Construir_torre_en_RAM:
  sw $s1, 0($t1)		# Discos en TORRE
@@ -39,11 +40,13 @@ Construir_torre_en_RAM:
  sll $t3, $t3, 16		# $t3 = 0x1001 0040
  ori $t3, $t3,   0x0040		#
  
- addi $t6, $zero, 1
+ addi $t6, $zero, 1		# Para restar 1 con el registro más adelante y bajar el IC
  
  jal f_Hanoi
  
  j EXIT
+
+
 
 ############### FUNCION RECURSIVA ###############
  f_Hanoi:	# MUEVE DEL ORIGEN AL DST "SEGÚN LOS PARÁMETROS MANDADOS"
@@ -57,23 +60,24 @@ Construir_torre_en_RAM:
 #-----------------------------------------------#
  beq $a0, $t6, casoBase		# if( n == 1 )
   casoRecursivo:		# else haz el caso comun (recursivo)		
-   #sub $a0, $a0, 1	 # discos n-1
-   addi $a0, $a0, -1
+   #sub $a0, $a0, 1
+   addi $a0, $a0, -1	 # discos n-1
    addi $t1, $t1, 4	 # posicionarme en 1 disco más arriba
    
 MOV:
-   add $t5, $zero, $t2 #la $t5, 0($t2)	### $t5 es AUX. para el SWAPEO
+   add $t5, $zero, $t2 	 # cambio de instrucción: la $t5, 0($t2)   ### $t5 es AUX. para el SWAPEO
    add $t2, $zero, $t3	 ### Intercambiamos temp y dst
    add $t3, $zero, $t5	 ### dst = $t2  y  temp = $t3
- 
+  
  jal f_Hanoi	# llamado recursivo
  # aqui regresa el primer RETURN 
-
+ 
    add $t5, $zero, $t2   ### SWAPEO TEMP y DST
    add $t2, $zero, $t3	 ### 
    add $t3, $zero, $t5	 ###
+   
 Caso_comun:
-  j VALIDA_ORG_Y_DST_2
+ # j VALIDA_ORG_Y_DST_2
 
   #//////////////// FUNCION VALIDAR /////////////////
 VALIDA_ORG_Y_DST_2:  
@@ -105,7 +109,7 @@ MOV_2: # Mueve_disco_de_ORG_a_DST
  j end_if
      
   casoBase:	# Mueve_disco_de_ORG_a_DST #
-  j VALIDA_ORG_Y_DST_1
+#  j VALIDA_ORG_Y_DST_1
   
 #//////////////// FUNCION VALIDAR /////////////////
 VALIDA_ORG_Y_DST_1:  
@@ -122,20 +126,19 @@ j Valida_pequeño_1
   
 End_valid_1:
  addi $t1, $t1, -4
-#/////////////////////////////////////////////////
-  
-MOV_1: #M ueve_de_ORG_a_DST
+#////////////////////////////////////////////////
+
+MOV_1: # Mueve_de_ORG_a_DST
    lw $t4, 0($t1)		# if (n == 1) entonces: Mueve disco...
    sw $t0, 0($t1)		# Borra disco movido
    sw $t4, 0($t3)		# ... de A  a C
-	
+ 
   end_if:
-   #add $v0, $zero, $v0		# NOP... RETURN con $v0
 #---------- LOAD 5 variables del STACK ----------# 
 	 lw $a0, 0($sp)
 	 lw $t1, 4($sp)
-   	#sub $t1, $t1, 4 	# Del disco anterior baja 1		################################ Comentar esta baja IC, pero no tiene lógica
-	 addi $t1, $t1, -4
+#sub $t1, $t1, 4 	
+#	 addi $t1, $t1, -4	# Del disco anterior baja 1 ######################## Comentar esta baja IC, pero no tiene lógica
 	 lw $t2, 8($sp)
 	 lw $t3, 12($sp)
 	 lw $ra, 16($sp)
